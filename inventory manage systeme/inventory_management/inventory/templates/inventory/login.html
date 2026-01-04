@@ -1,0 +1,323 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    .login-page-wrapper {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: calc(100vh - 60px);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        position: relative;
+        overflow-x: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .login-page-wrapper::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.3), transparent 50%);
+        animation: bgPulse 10s ease infinite;
+        z-index: 0;
+    }
+
+    @keyframes bgPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .login-page-wrapper::after {
+        content: '';
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.03) 2px,
+            rgba(255, 255, 255, 0.03) 4px
+        );
+        animation: gridMove 20s linear infinite;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    @keyframes gridMove {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(50px); }
+    }
+
+    .row {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+    }
+
+    .col-11, .col-md-4 {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px) saturate(180%);
+        border-radius: 24px;
+        padding: 50px 40px;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        animation: slideUp 0.6s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .col-11::before, .col-md-4::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+        text-align: center;
+        position: relative;
+    }
+
+    h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+
+    form {
+        width: 100%;
+        position: relative;
+        z-index: 2;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        color: #2d3748;
+        font-family: inherit;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px 18px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 100%;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transition: left 0.3s ease;
+    }
+
+    .btn-primary:hover::before {
+        left: 0;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .pt-3 {
+        padding-top: 1.5rem;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .text-muted {
+        color: #718096;
+        font-size: 0.95rem;
+    }
+
+    .text-muted a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .text-muted a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #667eea;
+        transition: width 0.3s ease;
+    }
+
+    .text-muted a:hover {
+        color: #764ba2;
+    }
+
+    .text-muted a:hover::after {
+        width: 100%;
+    }
+
+    .ml-2 {
+        margin-left: 0.5rem;
+    }
+
+    .invalid-feedback {
+        color: #ef4444;
+        font-size: 0.875rem;
+        margin-top: 4px;
+    }
+
+    .is-invalid {
+        border-color: #ef4444;
+    }
+
+    .is-invalid:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    .asteriskField {
+        color: #ef4444;
+        font-weight: bold;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #718096;
+        margin-top: 4px;
+    }
+
+    @media (max-width: 768px) {
+        .col-11, .col-md-4 {
+            padding: 40px 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .login-page-wrapper {
+            min-height: calc(100vh - 70px);
+        }
+    }
+</style>
+<div class="login-page-wrapper">
+    <div class="row">
+        <div class="col-11 col-md-4 mx-auto mt-5">
+            <h1>Log In</h1>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-primary" >login</button>
+            </form>
+            <div class="pt-3">
+                <small class="text-muted">Need an account? <a href="{% url 'signup' %}" class="ml-2">Sign Up</a> </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

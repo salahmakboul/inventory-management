@@ -1,0 +1,297 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .alert {
+        border: none;
+        border-radius: 12px;
+        padding: 16px 24px;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+        animation: slideDown 0.4s ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.95);
+        color: white;
+    }
+
+    .alert-success {
+        background: rgba(24, 226, 98, 1);
+        color: rgba(6, 49, 22, 0.95);
+    }
+
+    .col-md-10 {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px) saturate(180%);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        margin-top: 40px;
+    }
+
+    .d-flex {
+        margin-bottom: 24px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        margin: 0;
+    }
+
+    .table thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 16px 20px;
+        border: none;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table thead th:first-child {
+        border-top-left-radius: 12px;
+    }
+
+    .table thead th:last-child {
+        border-top-right-radius: 12px;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .table tbody tr:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        transform: scale(1.01);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 12px;
+    }
+
+    .table tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 12px;
+    }
+
+    .table td, .table th {
+        padding: 16px 20px;
+        vertical-align: middle;
+        color: #2d3748;
+    }
+
+    .table th[scope="row"] {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .text-center {
+        padding: 60px 20px !important;
+    }
+
+    .text-muted {
+        color: #718096 !important;
+        font-size: 1.1rem;
+    }
+
+    .text-muted a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .text-muted a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #667eea;
+        transition: width 0.3s ease;
+    }
+
+    .text-muted a:hover::after {
+        width: 100%;
+    }
+
+    .btn-outline-primary {
+        border: 2px solid #667eea;
+        color: #667eea;
+        background: transparent;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .btn-outline-primary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-outline-danger {
+        border: 2px solid #ef4444;
+        color: #ef4444;
+        background: transparent;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-outline-danger:hover {
+        background: #ef4444;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-sm {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+        .col-md-10 {
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .table {
+            font-size: 0.875rem;
+        }
+
+        .table td, .table th {
+            padding: 12px 10px;
+        }
+
+        .btn-outline-primary,
+        .btn-outline-danger {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            margin-right: 4px;
+        }
+    }
+
+    .row.mt-3 {
+        animation: slideDown 0.5s ease;
+    }
+
+    .table-hover tbody tr {
+        cursor: pointer;
+    }
+</style>
+
+{% if messages %}
+    <div class="row mt-3">
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="col-md-10 col-12 mx-auto alert alert-danger">
+                    {{message}}
+                </div>
+            {% else %}
+                <div class="col-md-10 col-12 mx-auto alert alert-success">
+                    {{message}}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}    
+
+<div class="row">
+    <div class="col-md-10 col-12 mx-auto mt-5">
+        <div class="d-flex justify-content-end"><a href="{% url 'add-item' %}" class="btn btn-primary">+</a></div>
+        <table class="table table-hover table-stripped">
+            <thead>
+                <th scope="col">ID</th>
+                <th scope="col">sujet </th>
+                <th scope="col">Numero</th>
+                <th scope="col">Date de message</th>
+                <th>_</th>
+                <th scope="col">_<th>
+                <th scope="col">_</th>
+            </thead>
+            <tbody>
+                {% if items|length == 0 %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        Aucun message trouvé. <a href="{% url 'add-item' %}">Ajouter le premier message</a>
+                    </td>
+                </tr>
+                {% endif %}
+                
+                {% for item in items %}
+                <tr>
+                    <th scope="row">{{ item.numero }}</th>
+                    <td>{{ item.sujet }}</td>
+                    <td>{{ item.numero}}</td>
+                    <td>{{ item.date_creation|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-primary btn-sm">Modifier</a>
+                        <a href="{% url 'delete-item' item.id %}" class="btn btn-outline-danger btn-sm">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

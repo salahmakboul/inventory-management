@@ -1,0 +1,240 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<style>
+    .delete-page-wrapper {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: calc(100vh - 60px);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        position: relative;
+        overflow-x: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .delete-page-wrapper::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.3), transparent 50%);
+        animation: bgPulse 10s ease infinite;
+        z-index: 0;
+    }
+
+    @keyframes bgPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .delete-page-wrapper::after {
+        content: '';
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.03) 2px,
+            rgba(255, 255, 255, 0.03) 4px
+        );
+        animation: gridMove 20s linear infinite;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    @keyframes gridMove {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(50px); }
+    }
+
+    .row {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+    }
+
+    .col-sm-11, .col-md-4 {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px) saturate(180%);
+        border-radius: 24px;
+        padding: 50px 40px;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        animation: slideUp 0.6s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .col-sm-11::before, .col-md-4::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    form {
+        position: relative;
+        z-index: 2;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        font-weight: 400;
+        color: #1a202c;
+        margin-bottom: 24px;
+        line-height: 1.4;
+    }
+
+    .fw-light {
+        font-weight: 400;
+    }
+
+    p {
+        background: rgba(102, 126, 234, 0.05);
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid #667eea;
+        margin-bottom: 20px;
+        line-height: 1.8;
+    }
+
+    .text-muted {
+        color: #4a5568;
+        font-size: 1rem;
+    }
+
+    p strong {
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    .text-danger {
+        color: #ef4444;
+        font-size: 0.95rem;
+        display: block;
+        padding: 12px 16px;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid #ef4444;
+        margin-bottom: 20px;
+    }
+
+    .mt-3 {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 28px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        border: 2px solid;
+        flex: 1;
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .btn-outline-danger {
+        border-color: #ef4444;
+        color: #ef4444;
+        background: transparent;
+    }
+
+    .btn-outline-danger:hover {
+        background: #ef4444;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-outline-primary {
+        border-color: #667eea;
+        color: #667eea;
+        background: transparent;
+    }
+
+    .btn-outline-primary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+        .col-sm-11, .col-md-4 {
+            padding: 40px 30px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        .mt-3 {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .delete-page-wrapper {
+            min-height: calc(100vh - 70px);
+        }
+    }
+</style>
+<div class="delete-page-wrapper">
+    <div class="row">
+        <div class="col-sm-11 col-md-4 mx-auto mt-5">
+            <form method="POST">
+                {% csrf_token %}
+                <h1 class="fw-light">Êtes-vous sûr de vouloir supprimer ce message ?</h1>
+                <p class="fw-light text-muted">
+                    Numéro: <strong>{{ item.numero }}</strong><br>
+                    Sujet: <strong>"{{ item.sujet }}"</strong>
+                </p>
+                <span class="fw-light text-danger">Cette action ne peut pas être annulée</span>
+                <div class="mt-3">
+                    <button class="btn btn-outline-danger">Supprimer</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Retour</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

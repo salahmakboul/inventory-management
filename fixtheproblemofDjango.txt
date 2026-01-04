@@ -1,0 +1,61 @@
+It looks like you're encountering a Python environment corruption issue when trying to use `pipenv`. The key error is:
+
+```
+Failed to import encodings module
+ModuleNotFoundError: No module named 'encodings'
+```
+
+This typically happens when:
+1. The virtual environment is corrupted
+2. Python can't find its standard libraries
+3. There are multiple Python installations conflicting
+
+Here's how to fix this:
+
+### **1. Delete the Corrupted Virtual Environment**
+```powershell
+pipenv --rm
+Remove-Item -Recurse -Force "C:\Users\LENOVO\.virtualenvs\activite-*"
+```
+
+### **2. Verify Python Installation**
+First check your Python installation is healthy:
+```powershell
+python -c "import encodings; print('Python is working')"
+```
+If this fails, you may need to reinstall Python.
+
+### **3. Recreate the Virtual Environment**
+```powershell
+pipenv --python 3.12  # Use your specific Python version
+pipenv install django
+```
+
+### **4. If Still Failing - Nuclear Option**
+1. Completely remove all Python versions from Control Panel
+2. Delete these folders:
+   - `C:\Users\LENOVO\AppData\Local\Programs\Python`
+   - `C:\Users\LENOVO\AppData\Roaming\Python`
+   - `C:\Users\LENOVO\.virtualenvs`
+3. Reinstall Python from python.org (check "Add to PATH")
+4. Then:
+```powershell
+pip install --upgrade pip pipenv
+cd your_project
+pipenv install django
+```
+
+### **Alternative Workaround**
+If you need to proceed immediately:
+```powershell
+python -m venv venv  # Create standard virtualenv
+.\venv\Scripts\activate
+pip install django
+```
+
+The root cause is typically either:
+- A corrupted Python installation
+- PATH environment variables pointing to wrong locations
+- Virtualenv creation issues due to permissions
+
+Would you like me to guide you through any of these steps in more detail?
